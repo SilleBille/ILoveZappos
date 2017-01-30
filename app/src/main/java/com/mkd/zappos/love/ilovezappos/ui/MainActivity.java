@@ -1,7 +1,5 @@
 package com.mkd.zappos.love.ilovezappos.ui;
 
-import android.databinding.DataBindingUtil;
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +9,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.mkd.zappos.love.ilovezappos.BuildConfig;
@@ -18,7 +18,9 @@ import com.mkd.zappos.love.ilovezappos.R;
 import com.mkd.zappos.love.ilovezappos.model.data.JSONResponse;
 import com.mkd.zappos.love.ilovezappos.model.data.Product;
 import com.mkd.zappos.love.ilovezappos.model.remote.ZapposAPI;
-import com.mkd.zappos.love.ilovezappos.util.ZapposClient;
+import com.mkd.zappos.love.ilovezappos.util.callback.OnProductResult;
+import com.mkd.zappos.love.ilovezappos.util.local.ZapposClient;
+import com.mkd.zappos.love.ilovezappos.util.remote.ZapposService;
 
 import java.util.List;
 
@@ -28,13 +30,18 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    private EditText etSearchBox;
+    private Button btSearch;
+    ZapposService service;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        etSearchBox = (EditText) findViewById(R.id.et_search);
+        btSearch = (Button) findViewById(R.id.bt_search);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -44,33 +51,20 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        if (BuildConfig.KEY.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Please obtain your API KEY first from Zappos!", Toast.LENGTH_LONG).show();
-            return;
-        }
-        ZapposAPI apiService =
-                ZapposClient.getClient().create(ZapposAPI.class);
-
-        Call<JSONResponse> call = apiService.getProductDetails(BuildConfig.KEY, "nike");
-        Log.v(TAG, call.request().url().toString());
-        call.enqueue(new Callback<JSONResponse>() {
+        service = new ZapposService(getApplicationContext());
+        service.setUpdateListener(new OnProductResult() {
             @Override
-            public void onResponse(Call<JSONResponse>call, Response<JSONResponse> response) {
-                // Log.v(TAG, response.message());
-                List<Product> productList = response.body().getResults();
-                Log.d(TAG, "Number of movies received: " + productList.size());
-                for(int i=0; i<productList.size(); i++) {
-                    Log.d(TAG, productList.get(i).getProductName());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JSONResponse>call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
+            public void onResultReceived(List<Product> searchResponse) {
+                Toast.makeText(getApplicationContext(), searchResponse.get(0).getProductName(), Toast.LENGTH_SHORT).show();
             }
         });
+
+
+    }
+
+    public void searchProduct(View view) {
+        if(service != null)
+            service.getProductList(etSearchBox.getText().toString());
     }
 
     @Override

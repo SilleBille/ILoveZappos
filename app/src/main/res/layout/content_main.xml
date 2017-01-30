@@ -13,8 +13,28 @@
     tools:context="com.mkd.zappos.love.ilovezappos.ui.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:inputType="text"
+        android:text="@string/et_search"
+        android:ems="10"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="44dp"
+        android:id="@+id/et_search" />
+
+    <Button
+        android:text="@string/bt_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/et_search"
+        android:layout_toRightOf="@+id/et_search"
+        android:layout_toEndOf="@+id/et_search"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
+        android:id="@+id/bt_search"
+        android:onClick="searchProduct"/>
 </RelativeLayout>

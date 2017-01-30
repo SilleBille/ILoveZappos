@@ -1,4 +1,4 @@
-package com.mkd.zappos.love.ilovezappos.util;
+package com.mkd.zappos.love.ilovezappos.util.local;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
