@@ -8,9 +8,11 @@
     <dimen name="thumbnail_size">102dp</dimen>
     <dimen name="brand_text_size">20sp</dimen>
     <dimen name="price_text_size">20sp</dimen>
-    <dimen name="orig_price_text_size">10sp</dimen>
+    <dimen name="orig_price_text_size">14sp</dimen>
     <dimen name="card_padding">24dp</dimen>
 
     <dimen name="card_press_translation_z">4dp</dimen>
     <dimen name="card_rest_elevation">2dp</dimen>
+
+    <dimen name="max_width">-1dp</dimen>
 </resources>

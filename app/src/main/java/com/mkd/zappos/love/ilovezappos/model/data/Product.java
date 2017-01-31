@@ -1,6 +1,8 @@
 package com.mkd.zappos.love.ilovezappos.model.data;
 
 import android.databinding.BindingAdapter;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
 import com.mkd.zappos.love.ilovezappos.R;
@@ -10,7 +12,7 @@ import com.squareup.picasso.Picasso;
  * Created by mkdin on 29-01-2017.
  */
 
-public class Product {
+public class Product implements Parcelable {
     private String brandName;
     private String thumbnailImageUrl;
     private String productId;
@@ -109,4 +111,49 @@ public class Product {
                 .error(R.drawable.ic_place_holder)
                 .into(view);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(brandName);
+        dest.writeString(thumbnailImageUrl);
+        dest.writeString(productId);
+        dest.writeString(originalPrice);
+        dest.writeString(styleId);
+        dest.writeString(colorId);
+        dest.writeString(price);
+        dest.writeString(percentOff);
+        dest.writeString(productUrl);
+        dest.writeString(productName);
+
+    }
+
+    public static final Parcelable.Creator<Product> CREATOR
+            = new Parcelable.Creator<Product>() {
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    public Product(Parcel in) {
+        brandName = in.readString();
+        thumbnailImageUrl = in.readString();
+        productId = in.readString();
+        originalPrice = in.readString();
+        styleId = in.readString();
+        colorId = in.readString();
+        price = in.readString();
+        percentOff = in.readString();
+        productUrl = in.readString();
+        productName = in.readString();
+    }
+
 }

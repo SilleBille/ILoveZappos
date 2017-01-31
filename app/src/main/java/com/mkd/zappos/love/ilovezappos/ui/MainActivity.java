@@ -2,8 +2,10 @@ package com.mkd.zappos.love.ilovezappos.ui;
 
 import android.animation.AnimatorInflater;
 import android.animation.StateListAnimator;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -41,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText etSearchBox;
     private ImageButton btSearch;
     ZapposService service;
+    static final String STATE_PRODUCT = "product";
+    static final String STATE_URL = "url";
+    // final StringBuilder url = new StringBuilder();
+    Product productLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +60,11 @@ public class MainActivity extends AppCompatActivity {
         btSearch = (ImageButton) findViewById(R.id.bt_search);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-
+        if (savedInstanceState != null) {
+            updateProductDetails((Product)savedInstanceState.get(STATE_PRODUCT),
+                    binding);
+            // url.insert(0,(StringBuilder)savedInstanceState.get(STATE_URL));
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,31 +77,55 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResultReceived(List<Product> searchResponse) {
                 if (searchResponse.size() > 0) {
-                    // Show only the first result! We can use adapters to fill RecyclerView or ListView here instead!
-                    binding.mainContent.setProduct(searchResponse.get(0));
-                    if (!searchResponse.get(0).getPercentOff().equals("0%"))
-                        binding.mainContent.txtOriginalPrice.setPaintFlags(
-                                binding.mainContent.txtOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    updateProductDetails(searchResponse.get(0), binding);
                 } else
                     Toast.makeText(getApplicationContext(), "No results found! Try again", Toast.LENGTH_SHORT).show();
             }
         });
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             StateListAnimator sla = AnimatorInflater.loadStateListAnimator(
                     getApplicationContext(), R.anim.card_state_list_anim);
             binding.mainContent.cv.setStateListAnimator(sla);
         }
 
 
+
+
     }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(productLoaded != null)
+            outState.putParcelable(STATE_PRODUCT, productLoaded);
+        super.onSaveInstanceState(outState);
+    }
+    private void updateProductDetails(final Product product, ActivityMainBinding binding) {
+        productLoaded = product;
+        // Show only the first result! We can use adapters to fill RecyclerView or ListView here instead!
+        binding.mainContent.setProduct(product);
+        binding.mainContent.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!product.getProductUrl().isEmpty()) {
+                    Uri uri = Uri.parse(product.getProductUrl()); // missing 'http://' will cause crashed
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            }
+        });
+        if (!product.getPercentOff().equals("0%"))
+            binding.mainContent.txtOriginalPrice.setPaintFlags(
+                    binding.mainContent.txtOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+    }
+
+
 
     public void searchProduct(View view) {
         if (service != null) {
             service.getProductList(etSearchBox.getText().toString());
-            etSearchBox.setText("");
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

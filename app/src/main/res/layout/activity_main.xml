@@ -22,8 +22,16 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.AppBarLayout>
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="@dimen/max_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/content_main" android:id="@+id/main_content" />
+            <include layout="@layout/content_main" android:id="@+id/main_content" />
+        </FrameLayout>
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
