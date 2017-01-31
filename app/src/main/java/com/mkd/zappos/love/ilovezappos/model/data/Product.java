@@ -1,5 +1,11 @@
 package com.mkd.zappos.love.ilovezappos.model.data;
 
+import android.databinding.BindingAdapter;
+import android.widget.ImageView;
+
+import com.mkd.zappos.love.ilovezappos.R;
+import com.squareup.picasso.Picasso;
+
 /**
  * Created by mkdin on 29-01-2017.
  */
@@ -96,4 +102,11 @@ public class Product {
         this.productName = productName;
     }
 
+    @BindingAdapter({"bind:imageUrl"})
+    public static void loadImage(ImageView view, String imageUrl) {
+        Picasso.with(view.getContext())
+                .load(imageUrl)
+                .error(R.drawable.ic_place_holder)
+                .into(view);
+    }
 }

@@ -53,14 +53,16 @@ public class ZapposService {
                 listener.onResultReceived(productList);
             }
 
-            @Override
-            public void onFailure(Call<JSONResponse> call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
+                @Override
+                public void onFailure (Call < JSONResponse > call, Throwable t){
+                    // Log error here since request failed
+                    Log.e(TAG, t.toString());
+                }
             }
-        });
+
+            );
+
+        }
+
 
     }
-
-
-}
