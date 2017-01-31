@@ -4,4 +4,6 @@
     <string name="et_search">Search Product</string>
     <string name="bt_search">Search</string>
     <string name="txt_offer">OFF!</string>
+
+    <string name="thumbnail">Thumbnail</string>
 </resources>

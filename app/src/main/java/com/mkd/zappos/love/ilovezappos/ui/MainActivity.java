@@ -13,9 +13,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -42,10 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private EditText etSearchBox;
     private ImageButton btSearch;
-    ZapposService service;
     static final String STATE_PRODUCT = "product";
-    static final String STATE_URL = "url";
-    // final StringBuilder url = new StringBuilder();
     Product productLoaded;
 
     @Override
@@ -56,15 +56,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        etSearchBox = (EditText) findViewById(R.id.et_search);
-        btSearch = (ImageButton) findViewById(R.id.bt_search);
+        etSearchBox = binding.mainContent.etSearch;
+        btSearch = binding.mainContent.btSearch;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        if (savedInstanceState != null) {
-            updateProductDetails((Product)savedInstanceState.get(STATE_PRODUCT),
-                    binding);
-            // url.insert(0,(StringBuilder)savedInstanceState.get(STATE_URL));
-        }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        service = new ZapposService(getApplicationContext());
+        final ZapposService service = new ZapposService(getApplicationContext());
         service.setUpdateListener(new OnProductResult() {
             @Override
             public void onResultReceived(List<Product> searchResponse) {
@@ -88,41 +84,66 @@ public class MainActivity extends AppCompatActivity {
                     getApplicationContext(), R.anim.card_state_list_anim);
             binding.mainContent.cv.setStateListAnimator(sla);
         }
+        btSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performSearch(service);
+            }
+        });
+        etSearchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    performSearch(service);
 
+                    return true;
+                }
+                return false;
+            }
+        });
 
-
+        /* Restore the product if a saved instance is found! */
+        if (savedInstanceState != null) {
+            updateProductDetails((Product) savedInstanceState.get(STATE_PRODUCT),
+                    binding);
+        }
 
     }
+
+    private void performSearch(ZapposService service) {
+        String searchQuery = etSearchBox.getText().toString().trim();
+        if (service != null && !searchQuery.isEmpty()) {
+            ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(etSearchBox.getWindowToken(), 0);
+            service.getProductList(searchQuery);
+        }
+    }
+
+    /* Save the product object before destroying*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if(productLoaded != null)
+        if (productLoaded != null)
             outState.putParcelable(STATE_PRODUCT, productLoaded);
         super.onSaveInstanceState(outState);
     }
+
     private void updateProductDetails(final Product product, ActivityMainBinding binding) {
-        productLoaded = product;
-        // Show only the first result! We can use adapters to fill RecyclerView or ListView here instead!
-        binding.mainContent.setProduct(product);
-        binding.mainContent.cv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!product.getProductUrl().isEmpty()) {
-                    Uri uri = Uri.parse(product.getProductUrl()); // missing 'http://' will cause crashed
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
+        if (product != null) {
+            productLoaded = product;
+            // Show only the first result! We can use adapters to fill RecyclerView or ListView here instead!
+            binding.mainContent.setProduct(product);
+            binding.mainContent.cv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!product.getProductUrl().isEmpty()) {
+                        Uri uri = Uri.parse(product.getProductUrl()); // missing 'http://' will cause crashed
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
-        if (!product.getPercentOff().equals("0%"))
-            binding.mainContent.txtOriginalPrice.setPaintFlags(
-                    binding.mainContent.txtOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-    }
-
-
-
-    public void searchProduct(View view) {
-        if (service != null) {
-            service.getProductList(etSearchBox.getText().toString());
+            });
+            if (!product.getPercentOff().equals("0%"))
+                binding.mainContent.txtOriginalPrice.setPaintFlags(
+                        binding.mainContent.txtOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
     }
 
