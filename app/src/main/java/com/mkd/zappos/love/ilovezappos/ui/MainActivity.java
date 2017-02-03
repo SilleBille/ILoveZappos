@@ -29,6 +29,7 @@ import com.mkd.zappos.love.ilovezappos.databinding.ActivityMainBinding;
 import com.mkd.zappos.love.ilovezappos.model.data.Product;
 import com.mkd.zappos.love.ilovezappos.ui.customwidget.CustomSearchButton;
 import com.mkd.zappos.love.ilovezappos.util.callback.OnProductResult;
+import com.mkd.zappos.love.ilovezappos.util.local.UtilityMethods;
 import com.mkd.zappos.love.ilovezappos.util.remote.ZapposService;
 
 import java.util.List;
@@ -99,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
                     fab.setVisibility(View.INVISIBLE);
                     binding.mainContent.setProduct(null);
                     productLoaded = null;
-                    Toast.makeText(getApplicationContext(), "No results found! Try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.err_no_results), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -112,7 +114,11 @@ public class MainActivity extends AppCompatActivity {
         btSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                performSearch(service);
+                if (UtilityMethods.isNetworkAvailable(getApplicationContext()))
+                    performSearch(service);
+                else
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.err_no_internet), Toast.LENGTH_SHORT).show();
             }
         });
         etSearchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -139,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAddedToCart() {
-        if(productLoaded != null) {
+        if (productLoaded != null) {
             Drawable d = addedToCart ? getResources().getDrawable(R.drawable.ic_check_white_24dp)
                     : getResources().getDrawable(R.drawable.ic_add_white_24dp);
             fab.setImageDrawable(d);

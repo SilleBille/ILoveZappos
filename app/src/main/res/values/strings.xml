@@ -10,9 +10,9 @@
     <string name="add">M5,12 L18,12 M11.5,6 L11.5,18.5</string>
     <string name="tick">M4.8,13.4 L9,17.6 M10.4,16.2 L19.6,7</string>
 
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
+    <string name="title_activity_main">I Love Zappos!</string>
     <string name="developer_name">©Dinesh Prasanth M K</string>
+
+    <string name="err_no_internet">No Internet Connectivity!</string>
+    <string name="err_no_results">No results found! Try again</string>
 </resources>
