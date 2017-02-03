@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 YoYo.with(Techniques.Shake)
                         .duration(700)
                         .playOn(binding.fab);
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
 
@@ -70,18 +71,30 @@ public class MainActivity extends AppCompatActivity {
                                 (AnimatedVectorDrawable) getDrawable(R.drawable.avd_tick_to_add);
                         binding.fab.setImageDrawable(tickToAdd);
                         tickToAdd.start();
-                        addedToCart = false;
-                        Snackbar.make(view, "Removed from cart!", Snackbar.LENGTH_SHORT).show();
+
+
                         // When product is removed from cart, do corresponding action!
                     } else {
                         AnimatedVectorDrawable addToTick =
                                 (AnimatedVectorDrawable) getDrawable(R.drawable.avd_add_to_tick);
                         binding.fab.setImageDrawable(addToTick);
                         addToTick.start();
-                        addedToCart = true;
-                        Snackbar.make(view, "Added to cart!", Snackbar.LENGTH_SHORT).show();
+
                         // When product is added in card, do corresponding action!
                     }
+                } else {
+                    if (addedToCart) {
+                        binding.fab.setImageResource(R.drawable.ic_add_white_24dp);
+                    } else {
+                        binding.fab.setImageResource(R.drawable.ic_check_white_24dp);
+                    }
+                }
+                if (addedToCart) {
+                    addedToCart = false;
+                    Snackbar.make(view, "Removed from cart!", Snackbar.LENGTH_SHORT).show();
+                } else{
+                    addedToCart = true;
+                    Snackbar.make(view, "Added to cart!", Snackbar.LENGTH_SHORT).show();
                 }
 
             }
@@ -146,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAddedToCart() {
         if (productLoaded != null) {
-            Drawable d = addedToCart ? getResources().getDrawable(R.drawable.ic_check_white_24dp)
-                    : getResources().getDrawable(R.drawable.ic_add_white_24dp);
-            fab.setImageDrawable(d);
+            int d = addedToCart ? R.drawable.ic_check_white_24dp
+                    : R.drawable.ic_add_white_24dp;
+            fab.setImageResource(d);
             fab.setVisibility(View.VISIBLE);
         } else
             fab.setVisibility(View.INVISIBLE);
