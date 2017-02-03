@@ -3,7 +3,10 @@
     <color name="colorPrimary">#f44336</color>
     <color name="colorPrimaryDark">#d32f2f</color>
     <color name="colorAccent">#40c4ff</color>
+    <color name="colorAccentLight">#80D8FF</color>
 
     <color name="noOfferPrice">#4caf50</color>
     <color name="offerPrice">@color/colorPrimary</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

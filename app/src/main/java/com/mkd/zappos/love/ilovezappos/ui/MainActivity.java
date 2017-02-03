@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,13 +15,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +27,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.mkd.zappos.love.ilovezappos.R;
 import com.mkd.zappos.love.ilovezappos.databinding.ActivityMainBinding;
 import com.mkd.zappos.love.ilovezappos.model.data.Product;
+import com.mkd.zappos.love.ilovezappos.ui.customwidget.CustomSearchButton;
 import com.mkd.zappos.love.ilovezappos.util.callback.OnProductResult;
 import com.mkd.zappos.love.ilovezappos.util.remote.ZapposService;
 
@@ -37,10 +36,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private EditText etSearchBox;
-    private ImageView btSearch;
+    private CustomSearchButton btSearch;
     static final String STATE_PRODUCT = "product";
+    static final String ADDED_TO_CART = "addedToCart";
     Product productLoaded;
-    boolean tick = false;
+    boolean addedToCart = false;
     FloatingActionButton fab;
 
     @Override
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         btSearch = binding.mainContent.btSearch;
         fab = binding.fab;
         fab.setVisibility(View.INVISIBLE);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
 
-                    if (tick) {
+                    if (addedToCart) {
                         AnimatedVectorDrawable tickToAdd =
                                 (AnimatedVectorDrawable) getDrawable(R.drawable.avd_tick_to_add);
                         binding.fab.setImageDrawable(tickToAdd);
                         tickToAdd.start();
-                        tick = false;
+                        addedToCart = false;
                         Snackbar.make(view, "Removed from cart!", Snackbar.LENGTH_SHORT).show();
                         // When product is removed from cart, do corresponding action!
                     } else {
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                                 (AnimatedVectorDrawable) getDrawable(R.drawable.avd_add_to_tick);
                         binding.fab.setImageDrawable(addToTick);
                         addToTick.start();
-                        tick = true;
+                        addedToCart = true;
                         Snackbar.make(view, "Added to cart!", Snackbar.LENGTH_SHORT).show();
                         // When product is added in card, do corresponding action!
                     }
@@ -91,9 +90,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResultReceived(List<Product> searchResponse) {
                 if (searchResponse.size() > 0) {
+                    // Since a product is found, we display the ADD to CARD button!
+                    // We can monitor the product ID here and then use it for checking out!
+                    fab.setVisibility(View.VISIBLE);
                     updateProductDetails(searchResponse.get(0), binding);
-                } else
+                } else {
+                    // Since we don't find the product, remove the card and Add to cart FAB!
+                    fab.setVisibility(View.INVISIBLE);
+                    binding.mainContent.setProduct(null);
+                    productLoaded = null;
                     Toast.makeText(getApplicationContext(), "No results found! Try again", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -124,8 +131,21 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             updateProductDetails((Product) savedInstanceState.get(STATE_PRODUCT),
                     binding);
-        }
+            addedToCart = savedInstanceState.getBoolean(ADDED_TO_CART);
 
+        }
+        showAddedToCart();
+
+    }
+
+    private void showAddedToCart() {
+        if(productLoaded != null) {
+            Drawable d = addedToCart ? getResources().getDrawable(R.drawable.ic_check_white_24dp)
+                    : getResources().getDrawable(R.drawable.ic_add_white_24dp);
+            fab.setImageDrawable(d);
+            fab.setVisibility(View.VISIBLE);
+        } else
+            fab.setVisibility(View.INVISIBLE);
     }
 
     private void performSearch(ZapposService service) {
@@ -139,8 +159,10 @@ public class MainActivity extends AppCompatActivity {
     /* Save the product object before destroying*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (productLoaded != null)
+        if (productLoaded != null) {
             outState.putParcelable(STATE_PRODUCT, productLoaded);
+            outState.putBoolean(ADDED_TO_CART, addedToCart);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -163,30 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 binding.mainContent.txtOriginalPrice.setPaintFlags(
                         binding.mainContent.txtOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-            fab.setVisibility(View.VISIBLE);
         }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

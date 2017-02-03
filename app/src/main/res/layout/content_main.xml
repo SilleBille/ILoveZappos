@@ -40,18 +40,25 @@
                 android:layout_height="match_parent"
                 android:ems="10"
                 android:hint="@string/et_search"
-                android:inputType="text"
-                android:imeOptions="actionSearch"/>
+                android:imeOptions="actionSearch"
+                android:inputType="text" />
 
-            <ImageView
+            <!--<ImageView
                 android:id="@+id/bt_search"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:clickable="true"
                 android:contentDescription="@string/bt_search"
                 android:src="@drawable/ic_search"
-                android:text="@string/bt_search"
-                android:clickable="true"
-                />
+                android:text="@string/bt_search" />-->
+
+            <com.mkd.zappos.love.ilovezappos.ui.customwidget.CustomSearchButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_search"
+                app:cb_color="@color/colorAccentLight"
+                android:id="@+id/bt_search"
+                app:cb_pressedRingWidth="1dp" />
 
 
         </LinearLayout>
@@ -69,8 +76,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/card_padding"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
 
                 <TextView
                     android:id="@+id/txt_product_name"
@@ -94,8 +101,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/thumbnail_size"
                         android:layout_weight="1"
-                        android:scaleType="fitCenter"
                         android:contentDescription="@string/thumbnail"
+                        android:scaleType="fitCenter"
                         app:imageUrl="@{product.thumbnailImageUrl}" />
 
 
