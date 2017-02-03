@@ -5,6 +5,7 @@ import android.animation.StateListAnimator;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,41 +13,35 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mkd.zappos.love.ilovezappos.BuildConfig;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.mkd.zappos.love.ilovezappos.R;
 import com.mkd.zappos.love.ilovezappos.databinding.ActivityMainBinding;
-import com.mkd.zappos.love.ilovezappos.model.data.JSONResponse;
 import com.mkd.zappos.love.ilovezappos.model.data.Product;
-import com.mkd.zappos.love.ilovezappos.model.remote.ZapposAPI;
 import com.mkd.zappos.love.ilovezappos.util.callback.OnProductResult;
-import com.mkd.zappos.love.ilovezappos.util.local.ZapposClient;
 import com.mkd.zappos.love.ilovezappos.util.remote.ZapposService;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private EditText etSearchBox;
-    private ImageButton btSearch;
+    private ImageView btSearch;
     static final String STATE_PRODUCT = "product";
     Product productLoaded;
+    boolean tick = false;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +53,37 @@ public class MainActivity extends AppCompatActivity {
 
         etSearchBox = binding.mainContent.etSearch;
         btSearch = binding.mainContent.btSearch;
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
+        fab = binding.fab;
+        fab.setVisibility(View.INVISIBLE);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                YoYo.with(Techniques.Shake)
+                        .duration(700)
+                        .playOn(binding.fab);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+
+                    if (tick) {
+                        AnimatedVectorDrawable tickToAdd =
+                                (AnimatedVectorDrawable) getDrawable(R.drawable.avd_tick_to_add);
+                        binding.fab.setImageDrawable(tickToAdd);
+                        tickToAdd.start();
+                        tick = false;
+                        Snackbar.make(view, "Removed from cart!", Snackbar.LENGTH_SHORT).show();
+                        // When product is removed from cart, do corresponding action!
+                    } else {
+                        AnimatedVectorDrawable addToTick =
+                                (AnimatedVectorDrawable) getDrawable(R.drawable.avd_add_to_tick);
+                        binding.fab.setImageDrawable(addToTick);
+                        addToTick.start();
+                        tick = true;
+                        Snackbar.make(view, "Added to cart!", Snackbar.LENGTH_SHORT).show();
+                        // When product is added in card, do corresponding action!
+                    }
+                }
+
             }
         });
         final ZapposService service = new ZapposService(getApplicationContext());
@@ -81,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             StateListAnimator sla = AnimatorInflater.loadStateListAnimator(
-                    getApplicationContext(), R.anim.card_state_list_anim);
+                    getApplicationContext(), R.animator.card_state_list_anim);
             binding.mainContent.cv.setStateListAnimator(sla);
         }
         btSearch.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
             if (!product.getPercentOff().equals("0%"))
                 binding.mainContent.txtOriginalPrice.setPaintFlags(
                         binding.mainContent.txtOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+            fab.setVisibility(View.VISIBLE);
         }
     }
 

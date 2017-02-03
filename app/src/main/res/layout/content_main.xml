@@ -33,6 +33,7 @@
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
+
             <EditText
                 android:id="@+id/et_search"
                 android:layout_width="wrap_content"
@@ -42,13 +43,17 @@
                 android:inputType="text"
                 android:imeOptions="actionSearch"/>
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/bt_search"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/bt_search"
-                android:src="@android:drawable/ic_search_category_default"
-                android:text="@string/bt_search" />
+                android:src="@drawable/ic_search"
+                android:text="@string/bt_search"
+                android:clickable="true"
+                />
+
+
         </LinearLayout>
 
         <android.support.v7.widget.CardView

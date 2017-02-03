@@ -1,0 +1,11 @@
+<!-- res/drawable/animvectordrawable.xml -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_add_white_24dp" >
+    <target
+        android:name="add"
+        android:animation="@animator/tick_to_add" />
+
+    <target
+        android:name="groupAdd"
+        android:animation="@animator/rotate_anim" />
+</animated-vector>
