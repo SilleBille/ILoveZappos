@@ -12,7 +12,7 @@ A sample app demonstrating effective use of Zappos API
   - Property Animation
   - Shake Animation
  - Custom search button (Modified from [android-circlebutton](https://github.com/markushi/android-circlebutton) based on the requirments)
-
+ - Automatically disregard offer price and %offer if offer% = 0
 ##Devices Used
 **Physical Devices**
  - Nexus 5 (Android 7.0)
