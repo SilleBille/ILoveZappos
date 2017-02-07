@@ -16,7 +16,6 @@ A sample app demonstrating effective use of Zappos API
 ##Devices Used
 **Physical Devices**
  - Nexus 5 (Android 7.0)
- - Nexus 6p (Android 7.0)
  - One Plus 3 (Android 7.0)
 
 **Virtual Devices**
