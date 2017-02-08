@@ -10,6 +10,6 @@ import java.util.List;
  */
 
 public interface OnProductResult {
-    public void onResultReceived(List<Product> searchResponse);
+    void onResultReceived(List<Product> searchResponse);
 
 }

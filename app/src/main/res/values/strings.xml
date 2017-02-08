@@ -15,4 +15,7 @@
 
     <string name="err_no_internet">No Internet Connectivity!</string>
     <string name="err_no_results">No results found! Try again</string>
+
+    <string name="cd_logo">I Love Zappos logo</string>
+    <string name="cd_nc_state">Made in NC State</string>
 </resources>

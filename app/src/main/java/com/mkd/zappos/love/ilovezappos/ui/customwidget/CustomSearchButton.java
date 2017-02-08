@@ -37,7 +37,6 @@ public class CustomSearchButton extends ImageView {
 
     private int pressedRingWidth;
     private int defaultColor = Color.BLACK;
-    private int pressedColor;
     private ObjectAnimator pressedAnimator;
 
     public CustomSearchButton(Context context) {
@@ -83,18 +82,9 @@ public class CustomSearchButton extends ImageView {
         pressedRingRadius = outerRadius - pressedRingWidth - pressedRingWidth / 2;
     }
 
-    public float getAnimationProgress() {
-        return animationProgress;
-    }
-
-    public void setAnimationProgress(float animationProgress) {
-        this.animationProgress = animationProgress;
-        this.invalidate();
-    }
 
     public void setColor(int color) {
         this.defaultColor = color;
-        this.pressedColor = getHighlightColor(color, PRESSED_COLOR_LIGHTUP);
 
         focusPaint.setColor(defaultColor);
         focusPaint.setAlpha(UNPRESSED_ALPHA);
@@ -140,10 +130,5 @@ public class CustomSearchButton extends ImageView {
         final int pressedAnimationTime = getResources().getInteger(ANIMATION_TIME_ID);
         pressedAnimator = ObjectAnimator.ofFloat(this, "animationProgress", 0f, 0f);
         pressedAnimator.setDuration(pressedAnimationTime);
-    }
-
-    private int getHighlightColor(int color, int amount) {
-        return Color.argb(Math.min(255, Color.alpha(color)), Math.min(255, Color.red(color) + amount),
-                Math.min(255, Color.green(color) + amount), Math.min(255, Color.blue(color) + amount));
     }
 }
