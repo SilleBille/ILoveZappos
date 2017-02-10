@@ -24,3 +24,8 @@ A sample app demonstrating effective use of Zappos API
  - Nexus 5X (Android 6.0)
  - Nexus 9 (Android 7.0)
  
+ Known Issue
+------------
+ - The card view doesn't render properly in potrait mode of Nexus 6 and Nexus 6p devices. It's a bug in Android SDK. You can find the issue posted here: https://code.google.com/p/android/issues/detail?id=233683
+ 
+ 
